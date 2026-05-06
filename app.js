@@ -1,3 +1,18 @@
+// ==================== INTRO ====================
+document.addEventListener('DOMContentLoaded', () => {
+    const overlay = document.getElementById('introOverlay');
+    const enterBtn = document.getElementById('introEnterBtn');
+
+    if (enterBtn && overlay) {
+        enterBtn.addEventListener('click', () => {
+            overlay.classList.add('hide');
+            setTimeout(() => {
+                overlay.style.display = 'none';
+            }, 650);
+        });
+    }
+});
+
 // ==================== STORAGE ====================
 const Storage = {
     get(key) {
@@ -53,7 +68,6 @@ function startLiveStudy() {
     document.getElementById('startLiveStudy').innerHTML = '<i class="fas fa-stop"></i> Studying...';
     document.getElementById('startLiveStudy').disabled = true;
     
-    // Update streak
     const stats = Storage.get('studyStats');
     const today = new Date().toDateString();
     if (stats.lastStudyDate !== today) {
@@ -74,8 +88,6 @@ function startLiveStudy() {
     liveStudyInterval = setInterval(() => {
         liveStudySeconds++;
         updateLiveTimerDisplay();
-        
-        // Save every minute
         if (liveStudySeconds % 60 === 0) {
             saveLiveStudyProgress();
         }
@@ -95,13 +107,10 @@ function stopLiveStudy() {
     document.getElementById('startLiveStudy').innerHTML = '<i class="fas fa-play"></i> Start Studying';
     document.getElementById('startLiveStudy').disabled = false;
     
-    // Save final progress
     saveLiveStudyProgress();
     
-    const minutes = Math.floor(liveStudySeconds / 60);
     addActivity(`Studied ${liveStudySubject} for ${formatTime(liveStudySeconds)}`, '#4F46E5');
     
-    // Increment sessions
     const stats = Storage.get('studyStats');
     stats.sessionsToday++;
     Storage.set('studyStats', stats);
@@ -112,7 +121,6 @@ function stopLiveStudy() {
 
 function saveLiveStudyProgress() {
     const stats = Storage.get('studyStats');
-    const minutes = Math.floor(liveStudySeconds / 60);
     const dayName = new Date().toLocaleDateString('en-US', { weekday: 'short' });
     
     stats.totalMinutes = (stats.totalMinutes || 0) + 1;
@@ -372,7 +380,6 @@ function loadYouTubeVideo(url) {
     const player = document.getElementById('youtubePlayer');
     player.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}" allowfullscreen></iframe>`;
     
-    // Save to recent
     saveVideo(videoId, url);
 }
 
@@ -610,7 +617,6 @@ function updateProgressSection() {
         }).join('');
     }
     
-    // Weekly chart
     const maxMins = Math.max(...Object.values(stats.weeklyMinutes || {}), 1);
     document.querySelectorAll('.bar').forEach(bar => {
         const day = bar.dataset.day;
@@ -758,7 +764,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('settingsName').value = settings.name;
     document.getElementById('themeSelect').value = settings.theme;
     
-    // Reset daily stats if new day
     const stats = Storage.get('studyStats');
     const today = new Date().toDateString();
     if (stats.lastStudyDate && stats.lastStudyDate !== today) {
@@ -895,7 +900,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    // Modal close
+    // Modal close on backdrop
     document.querySelectorAll('.modal').forEach(modal => {
         modal.addEventListener('click', e => {
             if (e.target === modal) closeModal(modal.id);
